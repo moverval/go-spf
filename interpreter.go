@@ -51,11 +51,17 @@ func ExecuteMechanism(ip net.IP, mechanism Mechanism, nameserver string, depth i
 		match, err := MatchIPWithCIDR(ip, mechanism.Value)
 
 		if err != nil {
-			if MatchIP(ip, mechanism.Value) {
-				return mechanism.Qualifier, nil
+			equal, err := MatchIP(ip, mechanism.Value)
+
+			if err != nil {
+				return NoneQualifier, err
 			}
 
-			return NoneQualifier, err
+			if equal {
+				return mechanism.Qualifier, nil
+			} else {
+				return NoneQualifier, nil
+			}
 		}
 
 		if !match {
@@ -196,12 +202,12 @@ func MatchIPWithCIDR(ip net.IP, cidr string) (bool, error) {
 	return ipNet.Contains(ip), nil
 }
 
-func MatchIP(ip net.IP, ip2 string) bool {
+func MatchIP(ip net.IP, ip2 string) (bool, error) {
 	ipNet := net.ParseIP(ip2)
 
 	if ipNet == nil {
-		return false
+		return false, ErrSyntax
 	}
 
-	return ip.Equal(ipNet)
+	return ip.Equal(ipNet), nil
 }

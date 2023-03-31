@@ -47,6 +47,19 @@ func TestIp6(t *testing.T) {
 	}
 }
 
+func TestIpv4IP(t *testing.T) {
+	result, err := spf.ValidateIP(net.ParseIP("::1"), "privateemail.com", "8.8.8.8:53", 10)
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if result != spf.FailQualifier {
+		t.Errorf("False Qualifier. Expected %q, got %q", spf.FailQualifier, result)
+	}
+}
+
 func TestValidationSoftFail(t *testing.T) {
 	// Check if local ip can send mail as gmail.com
 	result, err := spf.ValidateIP(net.ParseIP("192.168.178.50"), "gmail.com", "8.8.8.8:53", 10)
