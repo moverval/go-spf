@@ -13,6 +13,10 @@ func ValidateIP(ip net.IP, name string, nameserver string, depth int) (Qualifier
 	spf, err := LookupSPF(name, nameserver)
 
 	if err != nil {
+		if err == ErrNotFound {
+			return NoneQualifier, nil
+		}
+
 		return 0, err
 	}
 
