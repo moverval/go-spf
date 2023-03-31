@@ -139,13 +139,9 @@ func ExecuteMechanism(ip net.IP, mechanism Mechanism, nameserver string, depth i
 				return NoneQualifier, err
 			}
 
-			if result != NoneQualifier {
+			if result == PassQualifier {
 				// If e.g. -include was found, blacklist every ip from included spf record
-				if mechanism.Qualifier != PassQualifier {
-					return mechanism.Qualifier, nil
-				}
-
-				return result, nil
+				return mechanism.Qualifier, nil
 			}
 		}
 
