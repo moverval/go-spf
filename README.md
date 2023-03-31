@@ -87,7 +87,7 @@ if err != nil {
     // an error should not occur in this example
 }
 
-if !reflect.DeepEqual(result, expected) {
+if reflect.DeepEqual(result, expected) {
     // this is true
 }
 ```
