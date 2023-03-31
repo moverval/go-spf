@@ -114,7 +114,36 @@ func ExecuteMechanism(ip net.IP, mechanism Mechanism, nameserver string, depth i
 		}
 
 		return mechanism.Qualifier, nil
-	case IncludeMechanism, RedirectMechanism:
+	case RedirectMechanism:
+		// Redirect and include behave the same when executed
+		if depth == 0 {
+			return NoneQualifier, ErrOutOfRecursions
+		}
+
+		spf, err := LookupSPF(mechanism.Value, nameserver)
+
+		if err != nil {
+			return NoneQualifier, err
+		}
+
+		parsedSpf, err := ParseSPF(spf)
+
+		if err != nil {
+			return NoneQualifier, err
+		}
+
+		for _, mechanism := range parsedSpf {
+			result, err := ExecuteMechanism(ip, mechanism, nameserver, depth-1)
+
+			if err != nil {
+				return NoneQualifier, err
+			}
+
+			if result != NoneQualifier {
+				return result, nil
+			}
+		}
+	case IncludeMechanism:
 		// Redirect and include behave the same when executed
 		if depth == 0 {
 			return NoneQualifier, ErrOutOfRecursions
@@ -140,7 +169,6 @@ func ExecuteMechanism(ip net.IP, mechanism Mechanism, nameserver string, depth i
 			}
 
 			if result == PassQualifier {
-				// If e.g. -include was found, blacklist every ip from included spf record
 				return mechanism.Qualifier, nil
 			}
 		}
