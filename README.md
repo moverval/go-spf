@@ -2,6 +2,14 @@
 
 ## TL;DR
 
+To add this package to your go imports, use
+
+```bash
+go get github.com/moverval/go-spf
+```
+
+---
+
 This package provides easy to use features, to validate, if an IP belongs to a network.
 It supports all `spf1` mechanisms and the redirect modifier.
 
