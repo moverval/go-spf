@@ -8,7 +8,6 @@ import (
 
 func TestLookupSPF(t *testing.T) {
 	record, err := spf.LookupSPF("gmail.com", "8.8.8.8:53")
-
 	if err != nil {
 		t.Errorf("No record found: %s", err)
 	}

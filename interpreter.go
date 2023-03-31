@@ -9,7 +9,7 @@ import (
 //
 // ValidateIP can check number of recursions subrecords until it gives up.
 // To check infinitely, use a negative value
-func ValidateIP(ip net.IP, name string, nameserver string, recursions int) (Qualifier, error) {
+func ValidateIP(ip net.IP, name string, nameserver string, depth int) (Qualifier, error) {
 	spf, err := LookupSPF(name, nameserver)
 
 	if err != nil {
@@ -23,7 +23,7 @@ func ValidateIP(ip net.IP, name string, nameserver string, recursions int) (Qual
 	}
 
 	for _, mechanism := range record {
-		qualifier, err := ExecuteMechanism(ip, mechanism, nameserver, recursions)
+		qualifier, err := ExecuteMechanism(ip, mechanism, nameserver, depth)
 
 		if err != nil {
 			return NoneQualifier, err
@@ -38,7 +38,7 @@ func ValidateIP(ip net.IP, name string, nameserver string, recursions int) (Qual
 }
 
 // Make exact queries or execute a part of a record. This is used by ValidateIP
-func ExecuteMechanism(ip net.IP, mechanism Mechanism, nameserver string, recursions int) (Qualifier, error) {
+func ExecuteMechanism(ip net.IP, mechanism Mechanism, nameserver string, depth int) (Qualifier, error) {
 	switch mechanism.Mechanism {
 	case AllMechanism:
 		return mechanism.Qualifier, nil
@@ -112,7 +112,7 @@ func ExecuteMechanism(ip net.IP, mechanism Mechanism, nameserver string, recursi
 		return mechanism.Qualifier, nil
 	case IncludeMechanism, RedirectMechanism:
 		// Redirect and include behave the same when executed
-		if recursions == 0 {
+		if depth == 0 {
 			return NoneQualifier, ErrOutOfRecursions
 		}
 
@@ -129,7 +129,7 @@ func ExecuteMechanism(ip net.IP, mechanism Mechanism, nameserver string, recursi
 		}
 
 		for _, mechanism := range parsedSpf {
-			result, err := ExecuteMechanism(ip, mechanism, nameserver, recursions-1)
+			result, err := ExecuteMechanism(ip, mechanism, nameserver, depth-1)
 
 			if err != nil {
 				return NoneQualifier, err
