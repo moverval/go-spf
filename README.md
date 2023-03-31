@@ -31,7 +31,7 @@ case spf.FailQualifier:
 
 ## Errors
 
-All custom error types can be seen in `errors.go`. If an error get's thrown, it most of the time the issuers fault, but errors can also occur if a dns record could not be resolved.
+All custom error types can be seen in `errors.go`. If an error get's thrown, it is most of the time the issuers fault, but errors can also occur if a dns record could not be resolved.
 
 Examples of errors:
 
@@ -41,7 +41,7 @@ The spf record has an invalid syntax.
 
 - OutOfRecursions
 
-The issuer exceeded the `include` or `redirect` depth.
+The issuer exceeded the `include` or `redirect` depth. (Use -1 to make the depth infinite; not recommended)
 
 ## Lookup SPF
 
