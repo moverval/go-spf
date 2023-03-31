@@ -45,6 +45,22 @@ func TestParseInclude(t *testing.T) {
 	}
 }
 
+func TestParseHasMinus(t *testing.T) {
+	result, err := spf.ParseSPF("v=spf1 include:spf-test.voulter.com")
+
+	var expected spf.Record = []spf.Mechanism{
+		{Qualifier: spf.PassQualifier, Mechanism: spf.IncludeMechanism, Value: "spf-test.voulter.com"},
+	}
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Not as expected: %q does not equal to %q", result, &expected)
+	}
+}
+
 func TestParseUnformatted(t *testing.T) {
 	result, err := spf.ParseSPF("v=spf1                  InCluDe:      spf.voulter.com     ")
 

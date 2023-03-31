@@ -91,7 +91,10 @@ func ParseSPF(spf string) (Record, error) {
 				}
 
 				parseContext.Qualifier = qualifier
+				continue
 			}
+
+			*writeValue += string(chr)
 		case ':':
 			if parseContext.Mechanism == "" {
 				return nil, ErrSyntax
